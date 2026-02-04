@@ -115,7 +115,7 @@ canvas {
 <body>
 
 <!-- BACKGROUND MUSIC -->
-<audio id="bgMusic" autoplay loop>
+<audio id="bgMusic" loop>
     <source src="titanic.mp3" type="audio/mpeg">
 </audio>
 
@@ -171,6 +171,8 @@ let noScale = 1;
 let yesScale = 1;
 
 function goToValentine() {
+    const music = document.getElementById("bgMusic");
+    music.play().catch(() => {});
     screen1.classList.remove('active');
     screen2.classList.add('active');
 }
@@ -240,4 +242,5 @@ function animateConfetti() {
 
 </body>
 </html>
+
 
