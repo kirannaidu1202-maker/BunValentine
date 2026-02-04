@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>For Bandita 💖</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+}
+
+body {
+    margin: 0;
+    height: 100vh;
+    background: linear-gradient(135deg, #ff9ecf, #ffc0da);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+/* FLOATING HEARTS */
+.hearts span {
+    position: fixed;
+    bottom: -20px;
+    font-size: 24px;
+    animation: floatUp linear infinite;
+    opacity: 0.7;
+}
+
+@keyframes floatUp {
+    from {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+    to {
+        transform: translateY(-110vh) scale(1.5);
+        opacity: 0;
+    }
+}
+
+/* SCREENS */
+.screen {
+    display: none;
+    text-align: center;
+    background: rgba(255,255,255,0.88);
+    padding: 40px;
+    border-radius: 25px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    animation: fadeIn 0.6s ease;
+    z-index: 10;
+}
+
+.screen.active {
+    display: block;
+}
+
+h1 {
+    color: #ff2f92;
+    font-size: 2.5rem;
+    margin-bottom: 30px;
+}
+
+button {
+    padding: 15px 30px;
+    margin: 10px;
+    font-size: 1.1rem;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    background: #ff5fa2;
+    color: white;
+    transition: transform 0.2s, background 0.2s;
+}
+
+button:hover {
+    background: #ff2f92;
+}
+
+.yes {
+    background: #ff2f92;
+}
+
+.no {
+    background: #999;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* CELEBRATION */
+.celebration {
+    font-size: 4rem;
+    color: #ff2f92;
+    animation: pulse 1s infinite alternate;
+}
+
+@keyframes pulse {
+    from { transform: scale(1); }
+    to { transform: scale(1.1); }
+}
+
+canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+}
+</style>
+</head>
+
+<body>
+
+<!-- BACKGROUND MUSIC -->
+<audio id="bgMusic" autoplay loop>
+    <source src="titanic.mp3" type="audio/mpeg">
+</audio>
+
+<!-- FLOATING HEARTS -->
+<div class="hearts" id="hearts"></div>
+
+<!-- SCREEN 1 -->
+<div id="screen1" class="screen active">
+    <h1>Bandita 💕<br>Do you love me?</h1>
+    <button onclick="goToValentine()">Yes</button>
+    <button onclick="goToValentine()">Yes of course</button>
+    <button onclick="goToValentine()">Obviously</button>
+</div>
+
+<!-- SCREEN 2 -->
+<div id="screen2" class="screen">
+    <h1>Great! 💖<br>Will you be my Valentine?</h1>
+    <button id="yesBtn" class="yes" onclick="celebrate()">Yes</button>
+    <button id="noBtn" class="no" onclick="shrinkNo()">No</button>
+    <p id="warning" style="color:red;font-weight:bold;"></p>
+</div>
+
+<!-- SCREEN 3 -->
+<div id="screen3" class="screen">
+    <h1 class="celebration">I LOVE YOU 💘</h1>
+</div>
+
+<canvas id="confetti"></canvas>
+
+<script>
+/* HEART GENERATOR */
+const heartContainer = document.getElementById('hearts');
+setInterval(() => {
+    const heart = document.createElement('span');
+    heart.innerHTML = '💖';
+    heart.style.left = Math.random() * 100 + 'vw';
+    heart.style.animationDuration = (Math.random() * 5 + 5) + 's';
+    heartContainer.appendChild(heart);
+    setTimeout(() => heart.remove(), 10000);
+}, 500);
+
+/* SCREEN LOGIC */
+const screen1 = document.getElementById('screen1');
+const screen2 = document.getElementById('screen2');
+const screen3 = document.getElementById('screen3');
+
+const noBtn = document.getElementById('noBtn');
+const yesBtn = document.getElementById('yesBtn');
+const warning = document.getElementById('warning');
+
+let noClicks = 0;
+let noScale = 1;
+let yesScale = 1;
+
+function goToValentine() {
+    screen1.classList.remove('active');
+    screen2.classList.add('active');
+}
+
+function shrinkNo() {
+    noClicks++;
+    noScale -= 0.2;
+    yesScale += 0.2;
+
+    noBtn.style.transform = `scale(${noScale})`;
+    yesBtn.style.transform = `scale(${yesScale})`;
+
+    if (noClicks >= 4) {
+        noBtn.style.display = 'none';
+        warning.textContent = "Click YES if you want to live 😈";
+    }
+}
+
+function celebrate() {
+    screen2.classList.remove('active');
+    screen3.classList.add('active');
+    startConfetti();
+}
+
+/* STRAWBERRY CONFETTI */
+const canvas = document.getElementById('confetti');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let strawberries = [];
+
+function startConfetti() {
+    for (let i = 0; i < 200; i++) {
+        strawberries.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            size: Math.random() * 20 + 20,
+            speed: Math.random() * 3 + 2,
+            rotation: Math.random() * 360
+        });
+    }
+    animateConfetti();
+}
+
+function animateConfetti() {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    strawberries.forEach(s => {
+        ctx.save();
+        ctx.translate(s.x, s.y);
+        ctx.rotate(s.rotation * Math.PI/180);
+        ctx.font = `${s.size}px serif`;
+        ctx.fillText("🍓", 0, 0);
+        ctx.restore();
+
+        s.y += s.speed;
+        s.rotation += 2;
+
+        if (s.y > canvas.height) {
+            s.y = -20;
+            s.x = Math.random() * canvas.width;
+        }
+    });
+    requestAnimationFrame(animateConfetti);
+}
+</script>
+
+</body>
+</html>
